@@ -1,3 +1,4 @@
+
 /**
  * Audio Guestbook, Copyright (c) 2022 Playful Technology
  * 
@@ -44,12 +45,13 @@
 // GLOBALS
 // Audio initialisation code can be generated using the GUI interface at https://www.pjrc.com/teensy/gui/
 // Inputs
-AudioSynthWaveform          waveform1; // To create the "beep" sfx
-AudioInputI2S               i2s2; // I2S input from microphone on audio shield
-AudioPlaySdWavX              playWav1; // Play 44.1kHz 16-bit PCM greeting WAV file
-AudioRecordQueue            queue1; // Creating an audio buffer in memory before saving to SD
-AudioMixer4                 mixer; // Allows merging several inputs to same output
-AudioOutputI2S              i2s1; // I2S interface to Speaker/Line Out on Audio shield
+AudioSynthWaveform waveform1; // To create the "beep" sfx
+AudioInputI2S i2s2; // I2S input from microphone on audio shield
+//AudioPlaySdWavX  playWav1; // Play 44.1kHz 16-bit PCM greeting WAV file
+AudioPlaySdWav  playWav1; // Play 44.1kHz 16-bit PCM greeting WAV file
+AudioRecordQueue queue1; // Creating an audio buffer in memory before saving to SD
+AudioMixer4 mixer; // Allows merging several inputs to same output
+AudioOutputI2S i2s1; // I2S interface to Speaker/Line Out on Audio shield
 AudioConnection patchCord1(waveform1, 0, mixer, 0); // wave to mixer 
 AudioConnection patchCord3(playWav1, 0, mixer, 1); // wav file playback mixer
 AudioConnection patchCord4(mixer, 0, i2s1, 0); // mixer output to speaker (L)
@@ -168,6 +170,7 @@ void loop() {
   switch(mode){
     case Mode::Ready:
       // Falling edge occurs when the handset is lifted --> 611 telephone
+
       if (buttonRecord.fallingEdge()) {
         Serial.println("Handset lifted");
         mode = Mode::Prompting; print_mode();
@@ -182,10 +185,10 @@ void loop() {
       // Wait a second for users to put the handset to their ear
       wait(1000);
       // Play the greeting inviting them to record their message
-      playWav1.play("greeting.wav");    
+      playWav1.play("greeting.wav");                        /// atm this plays snippet and recording never starts work fine with no geetings.wav
       // Wait until the  message has finished playing
 //      while (playWav1.isPlaying()) {
-      while (!playWav1.isStopped()) {
+      while (!playWav1.isStopped()) { /// this was default but should be equivelent to above 
         // Check whether the handset is replaced
         buttonRecord.update();
         buttonPlay.update();
